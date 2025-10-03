@@ -36,22 +36,30 @@
       }
 
       const dia = parseInt(partes[0], 10);
-      const mes = parseInt(partes[1], 10) - 1; // JavaScript usa meses de 0 a 11
+      const mes = parseInt(partes[1], 10) - 1;
       const ano = parseInt(partes[2], 10);
 
       const dataBase = new Date(ano, mes, dia);
       const dataFinal = new Date(dataBase.getTime() + 28 * 24 * 60 * 60 * 1000);
 
-      const inicio = new Date(dataFinal.setHours(10, 0, 0, 0)).getTime();
-      const fim = new Date(dataFinal.setHours(11, 0, 0, 0)).getTime();
+      const inicio = new Date(dataFinal.setHours(10, 0, 0, 0));
+      const fim = new Date(dataFinal.setHours(11, 0, 0, 0));
 
-      const link = `intent://calendar#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/event;S.title=Reunião+de+acompanhamento;S.beginTime=${inicio};S.endTime=${fim};end`;
+      const pad = n => n.toString().padStart(2, '0');
+      const formatDate = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+
+      const inicioUTC = formatDate(inicio);
+      const fimUTC = formatDate(fim);
+
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Reunião+de+acompanhamento&dates=${inicioUTC}/${fimUTC}&details=Compromisso+gerado+automaticamente&location=Online`;
 
       document.getElementById("linkArea").innerHTML = `
         <p><strong>Data do compromisso:</strong> ${dataFinal.toLocaleDateString()}</p>
-        <a href="${link}">📅 Marcar compromisso</a>
+        <a href="${url}" target="_blank">📅 Criar compromisso no Google Calendar</a>
       `;
     }
   </script>
 </body>
 </html>
+
+
