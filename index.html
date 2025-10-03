@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerador de Compromisso</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    #linkArea {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Gerar compromisso 28 dias após a data informada</h2>
+  <label for="data">Informe a data (formato: DD/MM/AAAA):</label><br>
+  <input type="text" id="data" placeholder="05/10/2025"><br>
+  <button onclick="gerarLink()">Gerar link</button>
+
+  <div id="linkArea"></div>
+
+  <script>
+    function gerarLink() {
+      const input = document.getElementById("data").value;
+      const partes = input.split("/");
+      if (partes.length !== 3) {
+        alert("Formato inválido. Use DD/MM/AAAA.");
+        return;
+      }
+
+      const dia = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1; // JavaScript usa meses de 0 a 11
+      const ano = parseInt(partes[2], 10);
+
+      const dataBase = new Date(ano, mes, dia);
+      const dataFinal = new Date(dataBase.getTime() + 28 * 24 * 60 * 60 * 1000);
+
+      const inicio = new Date(dataFinal.setHours(10, 0, 0, 0)).getTime();
+      const fim = new Date(dataFinal.setHours(11, 0, 0, 0)).getTime();
+
+      const link = `intent://calendar#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/event;S.title=Reunião+de+acompanhamento;S.beginTime=${inicio};S.endTime=${fim};end`;
+
+      document.getElementById("linkArea").innerHTML = `
+        <p><strong>Data do compromisso:</strong> ${dataFinal.toLocaleDateString()}</p>
+        <a href="${link}">📅 Marcar compromisso</a>
+      `;
+    }
+  </script>
+</body>
+</html>
